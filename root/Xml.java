@@ -41,177 +41,77 @@ public final class Xml
     /**
      * Legge il file xml e crea gli oggetti inserendoli nell array
      */
-    public static void leggiPersone(ArrayList<Persona> listaPersone) throws XMLStreamException, FileNotFoundException {
-        inizializzaXMLLettura(Costanti.PATH_INPUT_PERSONE);
-        int id=0;
+    public static void leggiCitta(ArrayList<Citta> listaCitta) throws XMLStreamException, FileNotFoundException {
+        inizializzaXMLLettura(Costanti.PATH_INPUT);
+
+        int id = -1;
+        String nome = "";
+        Position p = new Position();
+        ArrayList<Integer> link = new ArrayList<>();
+
         while (xmlr.hasNext()) { // continua a leggere finché ha eventi a disposizione
             switch (xmlr.getEventType()) { // switch sul tipo di evento
                 case XMLStreamConstants.START_ELEMENT:
                     switch(xmlr.getLocalName())
                     {
-                        case Costanti.TAG_PERSONA:
+                        case Costanti.TAG_CITTA:
                         {
-                            id = Integer.parseInt(xmlr.getAttributeValue(0)); //id attributo è la posizione nell array listaPersone
-                            listaPersone.add(new Persona()); //creare la persona
-                        }
-                        break;
-                        case Costanti.TAG_NOME:
-                        {
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)  //vai fino a caratteri
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaPersone.get(id).setNome(xmlr.getText());
-                            }
+
+
+                           for (int i=0; i<xmlr.getAttributeCount();i++)
+                           {
+                                if(xmlr.getAttributeLocalName(i).equals("id"))
+                                {
+                                    id = Integer.parseInt(xmlr.getAttributeValue(i));
+                                }
+                               if(xmlr.getAttributeLocalName(i).equals("name"))
+                               {
+                                   nome = xmlr.getAttributeValue(i);
+                               }
+                               if(xmlr.getAttributeLocalName(i).equals("x"))
+                               {
+                                   p.setX(Integer.parseInt(xmlr.getAttributeValue(i)));
+                               }
+                               if(xmlr.getAttributeLocalName(i).equals("y"))
+                               {
+                                   p.setY(Integer.parseInt(xmlr.getAttributeValue(i)));
+                               }
+                               if(xmlr.getAttributeLocalName(i).equals("h"))
+                               {
+                                   p.setH(Integer.parseInt(xmlr.getAttributeValue(i)));
+                               }
+                           }
 
                             break;
                         }
-                        case Costanti.TAG_COGNOME:
-                        {
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaPersone.get(id).setCognome(xmlr.getText());
-                            }
 
-                            break;
-                        }
-                        case Costanti.TAG_SESSO:
+                        case Costanti.TAG_LINK:
                         {
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaPersone.get(id).setSesso(xmlr.getText().charAt(0));
-                            }
-
-                            break;
-                        }
-                        case Costanti.TAG_COMUNE_NASCITA:
-                        {
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaPersone.get(id).setLuogo(xmlr.getText());
-                            }
-
-                            break;
-                        }
-                        case Costanti.TAG_DATA_NASCITA:
-                        {
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaPersone.get(id).setDataDiNascita(LocalDate.parse(xmlr.getText()));
-                            }
-
-                            break;
+                            link.add(Integer.parseInt(xmlr.getAttributeValue(0)));
                         }
 
                     }
                     break;
-
-            }
-            xmlr.next();
-        }
-        xmlr.close();
-        id++;
-        System.out.println(AnsiColors.GREEN+"Sono state acquisite "+AnsiColors.RED+id+AnsiColors.GREEN+" persone correttamente"+AnsiColors.RESET);
-    }
-
-    /**
-     * Legge il file xml e crea gli oggetti inserendoli nell array
-     */
-    public static void leggiComuni(ArrayList<Comune> listaComuni) throws XMLStreamException, FileNotFoundException {
-        inizializzaXMLLettura(Costanti.PATH_INPUT_COMUNI);
-        int id=-1;
-        while (xmlr.hasNext()) { // continua a leggere finché ha eventi a disposizione
-            switch (xmlr.getEventType()) { // switch sul tipo di evento
-                case XMLStreamConstants.START_ELEMENT:
-                    switch(xmlr.getLocalName())
+                case XMLStreamConstants.END_ELEMENT:
+                {
+                    if(xmlr.getLocalName().equals(Costanti.TAG_CITTA))
                     {
-                        case Costanti.TAG_COMUNE:
-                        {
-                            id++;
-                            listaComuni.add(new Comune());
-                        }
-                        break;
-                        case Costanti.TAG_NOME:
-                        {
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaComuni.get(id).setNomeComune(xmlr.getText());
-                            }
-
-                            break;
-                        }
-                        case Costanti.TAG_CODICE:
-                        {
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaComuni.get(id).setCodiceComune(xmlr.getText());
-                            }
-
-                            break;
-                        }
-
-
+                        listaCitta.add(new Citta(id,p,nome,link));
+                        link = new ArrayList<>();
+                        p = new Position();
                     }
-                    break;
 
+                }
             }
             xmlr.next();
         }
         xmlr.close();
-        id++;
-        System.out.println(AnsiColors.GREEN+"Sono stati acquisiti "+AnsiColors.RED+id+AnsiColors.GREEN+" comuni correttamente"+AnsiColors.RESET);
-    }
-    /**
-     * Legge il file xml e crea gli oggetti inserendoli nell array
-     */
-    public static void leggiCF(ArrayList<CodiceFiscale> listaCF) throws XMLStreamException, FileNotFoundException {
-        inizializzaXMLLettura(Costanti.PATH_INPUT_CF);
-        int id=-1;
-        while (xmlr.hasNext()) { // continua a leggere finché ha eventi a disposizione
-            switch (xmlr.getEventType()) { // switch sul tipo di evento
-                case XMLStreamConstants.START_ELEMENT:
-                    switch(xmlr.getLocalName())
-                    {
-                        case Costanti.TAG_CODICE:
-                        {
-                            id++;
-                            listaCF.add(new CodiceFiscale());
-                            while(xmlr.hasNext() && xmlr.getEventType() != XMLStreamConstants.CHARACTERS)
-                                xmlr.next();
-                            if (xmlr.getText().trim().length() > 0) // controlla se il testo non contiene solo spazi
-                            {
-                                listaCF.get(id).setNome(xmlr.getText());
-                            }
-                        }
-                        break;
-
-                    }
-                    break;
-
-            }
-            xmlr.next();
         }
-        xmlr.close();
-        id++;
-        System.out.println(AnsiColors.GREEN+"Sono stati acquisiti "+AnsiColors.RED+id+AnsiColors.GREEN+" codici fiscali correttamente"+AnsiColors.RESET);
-
-    }
 
     /**
      * Scrive su un file xml
      */
+    /*
     public static void scriviPersone(ArrayList<Persona> listaPersone, ArrayList<CodiceFiscale> listaCF)
     {
 
@@ -283,6 +183,6 @@ public final class Xml
             System.out.println(Costanti.ERR_SCRITTURA);
         }
     }
-
+    */
 
 }
