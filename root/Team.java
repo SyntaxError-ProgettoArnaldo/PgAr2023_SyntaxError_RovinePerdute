@@ -3,13 +3,18 @@ package root;
 import UnibsLib.PrettyStrings;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.PriorityQueue;
+
+import static root.Costanti.*;
 
 
 public class Team
 {
     private String nome;
     private double carburante;
-    private ArrayList<Citta> percorso;
+    private ArrayList<Citta> percorso = new ArrayList<>();
     private double mat[][] = new double[Main.lista_citta.size()][Main.lista_citta.size()];
 
     public String getNome() {
@@ -26,6 +31,19 @@ public class Team
 
     public double[][] getMat() {
         return mat;
+    }
+
+    public void setPercorso(ArrayList<Integer> path)
+    {
+        for (int i = 0; i < path.size(); i++) {
+            for (int j = 0; j < Main.lista_citta.size(); j++) {
+                if(Main.lista_citta.get(j).getId()==path.get(i))
+                {
+                    this.percorso.add(Main.lista_citta.get(j));
+                }
+            }
+        }
+
     }
 
     public Team(String nome, double carburante, ArrayList<Citta> percorso) {
@@ -49,8 +67,8 @@ public class Team
                 {
                     if(Main.lista_citta.get(i).sonoCollegate(Main.lista_citta.get(j).getId()))
                     {
-                        //this.mat[i][j] = CalcoloRotta.distanzaEuclidea(Main.lista_citta.get(i).getCoord(),Main.lista_citta.get(j).getCoord());
-                        this.mat[i][j] = i+1;
+                        this.mat[i][j] = CalcoloRotta.distanzaEuclidea(Main.lista_citta.get(i).getCoord(),Main.lista_citta.get(j).getCoord());
+                        //this.mat[i][j] = i+1;
                     }
                     else {
                         this.mat[i][j] = 0;
@@ -60,8 +78,8 @@ public class Team
                 {
                     if(Main.lista_citta.get(i).sonoCollegate(Main.lista_citta.get(j).getId()))
                     {
-                        //this.mat[i][j] = CalcoloRotta.differenzaH(Main.lista_citta.get(i).getCoord(),Main.lista_citta.get(j).getCoord());
-                        this.mat[i][j]= i+3;
+                        this.mat[i][j] = CalcoloRotta.differenzaH(Main.lista_citta.get(i).getCoord(),Main.lista_citta.get(j).getCoord());
+                        //this.mat[i][j]= i+3;
                     }
                     else {
                         this.mat[i][j] = 0;
@@ -84,93 +102,66 @@ public class Team
     }
 
 
+    public ArrayList<Integer> findShortestPath() {
 
+        double[][] mat1 = this.mat;
+        int indice_rovine = mat1.length-1;
+        int n = mat1.length;
 
+        double[] distanze = new double[n];
+        Arrays.fill(distanze, INFINITY);
+        distanze[0] = 0.0;
 
+        int[] indiciCitta = new int[n];
+        Arrays.fill(indiciCitta, -1);
 
+        PriorityQueue<Integer> queue = new PriorityQueue<>((a, b) -> Double.compare(distanze[a], distanze[b]));
+        queue.offer(0);
 
+        while (!queue.isEmpty()) {
+            int currentCityIndex = queue.poll();
 
-
-    static int minDistance(double[] dist, Boolean[] sptSet)
-    {
-        // Initialize min value
-        double min = Integer.MAX_VALUE;
-        int min_index = -1;
-
-        for (int v = 0; v < Main.lista_citta.size(); v++)
-            if (sptSet[v] == false && dist[v] <= min ) {
-                min = dist[v];
-                min_index = v;
-
+            if (currentCityIndex == indice_rovine) {
+                break;
             }
 
-        return min_index;
-    }
+            for (int i = 0; i < n; i++) {
+                double nextDistance = mat1[currentCityIndex][i];
 
-    // A utility function to print the constructed distance array
-    static void printSolution(double[] dist, int n)
-    {
-        System.out.println("Vertex Distance from Source");
-        for (int i = 0; i < Main.lista_citta.size(); i++)
-            System.out.println(i + " tt " + dist[i]);
-    }
+                if (nextDistance == 0.0) {
+                    continue;  // Ignore self-loops
+                }
 
-    // Function that implements Dijkstra's single source shortest path
-    // algorithm for a graph represented using adjacency matrix
-    // representation
-    static void dijkstra(double graph[][], int src)
-    {
-        double dist[] = new double[Main.lista_citta.size()]; // The output array. dist[i] will hold
-        // the shortest distance from src to i
+                double totalDistance = distanze[currentCityIndex] + nextDistance;
 
-        // sptSet[i] will true if vertex i is included in shortest
-        // path tree or shortest distance from src to i is finalized
-        Boolean sptSet[] = new Boolean[Main.lista_citta.size()];
-
-        // Initialize all distances as INFINITE and stpSet[] as false
-        for (int i = 0; i < Main.lista_citta.size(); i++) {
-            dist[i] = Integer.MAX_VALUE;
-            sptSet[i] = false;
-        }
-
-        // Distance of source vertex from itself is always 0
-        dist[src] = 0;
-
-
-
-        // Find shortest path for all vertices
-        for (int count = 0; count < Main.lista_citta.size() - 1; count++) {
-            // Pick the minimum distance vertex from the set of vertices
-            // not yet processed. u is always equal to src in first
-            // iteration.
-            int u = minDistance(dist, sptSet);
-
-            // Mark the picked vertex as processed
-            sptSet[u] = true;
-
-            // Update dist value of the adjacent vertices of the
-            // picked vertex.
-            for (int v = 0; v < Main.lista_citta.size(); v++)
-            {
-
-                // Update dist[v] only if is not in sptSet, there is an
-                // edge from u to v, and total weight of path from src to
-                // v through u is smaller than current value of dist[v]
-                if (!sptSet[v] && graph[u][v] != 0 &&
-                        dist[u] != Integer.MAX_VALUE && dist[u] + graph[u][v] < dist[v])
-                    dist[v] = dist[u] + graph[u][v];
+                if (totalDistance < distanze[i]) {
+                    distanze[i] = totalDistance;
+                    indiciCitta[i] = currentCityIndex;
+                    queue.offer(i);
+                }
             }
-
         }
 
-        // print the constructed distance array
-        printSolution(dist, Main.lista_citta.size());
+        ArrayList<Integer> percorso = creaPercorso(indiciCitta, indice_rovine);
+        this.carburante=distanze[indice_rovine];
 
+        this.setPercorso(percorso);
+
+
+        return percorso;
     }
 
+    private static ArrayList<Integer> creaPercorso(int[] previousCities, int lastCityIndex) {
+        ArrayList<Integer> percorso = new ArrayList<>();
 
+        int currentIndex = lastCityIndex;
+        while (currentIndex != -1) {
+            percorso.add(0, currentIndex);
+            currentIndex = previousCities[currentIndex];
+        }
 
-
+        return percorso;
+    }
 
 
 

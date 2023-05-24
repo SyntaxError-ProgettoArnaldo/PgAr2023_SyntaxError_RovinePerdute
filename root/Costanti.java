@@ -3,6 +3,7 @@ package root;
 public class Costanti
 {
 
+    public static final int INFINITY = Integer.MAX_VALUE;
 
     //Path
     public static final String PATH_INPUT = "test_file/PgAr_Map_12.xml";
