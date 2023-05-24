@@ -1,12 +1,9 @@
 package root;
 
-import UnibsLib.AnsiColors;
-
 import javax.xml.stream.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public final class Xml
@@ -41,7 +38,7 @@ public final class Xml
     /**
      * Legge il file xml e crea gli oggetti inserendoli nell array
      */
-    public static void leggiCitta(ArrayList<Citta> listaCitta) throws XMLStreamException, FileNotFoundException {
+    public static void leggiCitta() throws XMLStreamException, FileNotFoundException {
         inizializzaXMLLettura(Costanti.PATH_INPUT);
 
         int id = -1;
@@ -96,7 +93,7 @@ public final class Xml
                 {
                     if(xmlr.getLocalName().equals(Costanti.TAG_CITTA))
                     {
-                        listaCitta.add(new Citta(id,p,nome,link));
+                        Main.lista_citta.add(new Citta(id,p,nome,link));
                         link = new ArrayList<>();
                         p = new Position();
                     }
@@ -106,7 +103,7 @@ public final class Xml
             xmlr.next();
         }
         xmlr.close();
-        }
+    }
 
     /**
      * Scrive su un file xml

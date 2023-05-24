@@ -5,13 +5,13 @@ import java.util.ArrayList;
 public class Citta
 {
     private int id;
-    private Position coord;
+    private Position coordinate;
     private String nome;
     ArrayList<Integer> id_link;
 
-    public Citta(int id, Position coord, String nome, ArrayList<Integer> id_link) {
+    public Citta(int id, Position coordinate, String nome, ArrayList<Integer> id_link) {
         this.id = id;
-        this.coord = coord;
+        this.coordinate = coordinate;
         this.nome = nome;
         this.id_link = id_link;
     }
@@ -20,8 +20,8 @@ public class Citta
         return id;
     }
 
-    public Position getCoord() {
-        return coord;
+    public Position getCoordinate() {
+        return coordinate;
     }
 
     public String getNome() {
@@ -32,6 +32,11 @@ public class Citta
         return id_link;
     }
 
+    /**
+     * Serve per sapere se due città sono collegate, se si confronta una città con se stessa ritorna true
+     * @param id id della città con cui si deve confrontare
+     * @return true se sono collegate false altrimenti
+     */
     public boolean sonoCollegate(int id)
     {
         if(this.id == id)
@@ -42,13 +47,12 @@ public class Citta
         {
             return id_link.contains(id);
         }
-
     }
     @Override
     public String toString() {
-        return "Citta{" +
+        return "Città{" +
                 "id=" + id +
-                ", coord=" + coord +
+                ", coordinate=" + coordinate +
                 ", nome='" + nome + '\'' +
                 ", id_link=" + id_link +
                 '}';

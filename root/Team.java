@@ -1,10 +1,8 @@
 package root;
 
-import UnibsLib.PrettyStrings;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.PriorityQueue;
 
 import static root.Costanti.*;
@@ -35,10 +33,9 @@ public class Team
 
     public void setPercorso(ArrayList<Integer> path)
     {
-        for (int i = 0; i < path.size(); i++) {
+        for (Integer integer : path) {
             for (int j = 0; j < Main.lista_citta.size(); j++) {
-                if(Main.lista_citta.get(j).getId()==path.get(i))
-                {
+                if (Main.lista_citta.get(j).getId() == integer) {
                     this.percorso.add(Main.lista_citta.get(j));
                 }
             }
@@ -58,7 +55,9 @@ public class Team
     }
 
 
-
+    /**
+    * Crea le matrici con le distanze calcolate o con la distanza euclidea o con la differenza delle altezze in base al team di riferimento
+    */
     public void creaMatrice()
     {
         for (int i = 0; i < Main.lista_citta.size(); i++) {
@@ -67,7 +66,7 @@ public class Team
                 {
                     if(Main.lista_citta.get(i).sonoCollegate(Main.lista_citta.get(j).getId()))
                     {
-                        this.mat[i][j] = CalcoloRotta.distanzaEuclidea(Main.lista_citta.get(i).getCoord(),Main.lista_citta.get(j).getCoord());
+                        this.mat[i][j] = CalcoloRotta.distanzaEuclidea(Main.lista_citta.get(i).getCoordinate(),Main.lista_citta.get(j).getCoordinate());
                         //this.mat[i][j] = i+1;
                     }
                     else {
@@ -78,7 +77,7 @@ public class Team
                 {
                     if(Main.lista_citta.get(i).sonoCollegate(Main.lista_citta.get(j).getId()))
                     {
-                        this.mat[i][j] = CalcoloRotta.differenzaH(Main.lista_citta.get(i).getCoord(),Main.lista_citta.get(j).getCoord());
+                        this.mat[i][j] = CalcoloRotta.differenzaH(Main.lista_citta.get(i).getCoordinate(),Main.lista_citta.get(j).getCoordinate());
                         //this.mat[i][j]= i+3;
                     }
                     else {
@@ -91,9 +90,9 @@ public class Team
 
     public void scriviMat()
     {
-        for (int i = 0; i < mat.length; i++) {
+        for (double[] doubles : mat) {
             for (int j = 0; j < mat.length; j++) {
-                System.out.printf("%10.2f \t",mat[i][j]);
+                System.out.printf("%10.2f \t", doubles[j]);
                 //System.out.printf("%4.8s",PrettyStrings.center(String.valueOf(mat[i][j]),20));
 
             }
@@ -101,8 +100,11 @@ public class Team
         }
     }
 
+    /**
+     * Algoritmo di dijkstra per calcolare il percorso migliore
+     */
 
-    public ArrayList<Integer> findShortestPath() {
+    public void findShortestPath() {
 
         double[][] mat1 = this.mat;
         int indice_rovine = mat1.length-1;
@@ -147,9 +149,13 @@ public class Team
 
         this.setPercorso(percorso);
 
-
-        return percorso;
     }
+
+    /**
+     * @param previousCities lista degli id delle città
+     * @param lastCityIndex indice dell'ultima città
+     * @return Arraylist che contiene gli indici delle città per il percorso migliore
+     */
 
     private static ArrayList<Integer> creaPercorso(int[] previousCities, int lastCityIndex) {
         ArrayList<Integer> percorso = new ArrayList<>();

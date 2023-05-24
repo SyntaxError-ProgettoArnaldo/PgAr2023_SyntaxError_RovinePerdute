@@ -6,7 +6,7 @@ public class Costanti
     public static final int INFINITY = Integer.MAX_VALUE;
 
     //Path
-    public static final String PATH_INPUT = "test_file/PgAr_Map_12.xml";
+    public static final String PATH_INPUT = "test_file/PgAr_Map_5.xml";
 
     //Stringhe
     public static final String ERR_INIZ_WRITER = "Errore nell inizializzazione del writer" ;
