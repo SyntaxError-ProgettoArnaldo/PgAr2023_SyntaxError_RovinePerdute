@@ -4,6 +4,8 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
+import java.time.*;
+
 import static root.Xml.*;
 
 public class Main
@@ -12,33 +14,17 @@ public class Main
     public static void main(String[] args) throws XMLStreamException, FileNotFoundException {
         leggiCitta();
 
-        Team team1 = new Team("Tonatiuh");
-        Team team2 = new Team("Metztli");
+        ArrayList<Team> lista_team = new ArrayList<>();
+        lista_team.add(new Team("Tonatiuh"));
+        lista_team.add(new Team("Metztli"));
 
-        team1.findShortestPath();
-        team2.findShortestPath();
-
-        System.out.println("Distanza = "+team1.getCarburante());
-        System.out.print("Percorso: ");
-
-        for (int i = 0; i < team1.getPercorso().size(); i++)
-        {
-            System.out.print(team1.getPercorso().get(i).getNome()+" --> ");
+        for (int i = 0; i < lista_team.size(); i++) {
+            Dijkstra.findShortestPath(lista_team.get(i));
         }
 
-        System.out.println("\nNumero città: "+team1.getPercorso().size());
 
-        System.out.println("---------------------------------------------------");
 
-        System.out.println("Distanza = "+team2.getCarburante());
-        System.out.print("Percorso: ");
-
-        for (int i = 0; i < team2.getPercorso().size(); i++)
-        {
-            System.out.print(team2.getPercorso().get(i).getNome()+"-->");
-        }
-
-        System.out.println("\nNumero città: "+team2.getPercorso().size());
+        scriviCitta(lista_team);
 
     }
 }

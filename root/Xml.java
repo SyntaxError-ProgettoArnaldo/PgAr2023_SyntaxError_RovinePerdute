@@ -1,5 +1,7 @@
 package root;
 
+import UnibsLib.AnsiColors;
+
 import javax.xml.stream.*;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 
 public final class Xml
 {
+    public static final int NUMERO_TEAM = 2;
     static XMLInputFactory xmlif = null;
     static XMLStreamReader xmlr = null;
     static XMLOutputFactory xmlof = null;
@@ -32,6 +35,7 @@ public final class Xml
             System.out.println(Costanti.ERR_INIZ_WRITER);
             System.out.println(e.getMessage());
         }
+
     }
 
 
@@ -103,74 +107,36 @@ public final class Xml
             xmlr.next();
         }
         xmlr.close();
+        System.out.println(AnsiColors.GREEN+"Lettura file XML completata"+AnsiColors.RESET);
     }
 
     /**
      * Scrive su un file xml
      */
-    /*
-    public static void scriviPersone(ArrayList<Persona> listaPersone, ArrayList<CodiceFiscale> listaCF)
+    public static void scriviCitta(ArrayList<Team> lista_team)
     {
-
-        inizializzaXMLScrittura(Costanti.NOME_FILE_OUTPUT_XML);
         try { // blocco try per raccogliere eccezioni
-            xmlw.writeStartElement(Costanti.TAG_OUTPUT); // scrittura del tag radice <programmaArnaldo>
-            xmlw.writeStartElement(Costanti.TAG_PERSONE);
-            xmlw.writeAttribute(Costanti.ATT_NUMERO,String.valueOf(listaPersone.size()));
-            for (int i = 0; i < listaPersone.size(); i++) {
-                xmlw.writeStartElement(Costanti.TAG_PERSONA); // scrittura del tag autore...
-                xmlw.writeAttribute(Costanti.TAG_ID, Integer.toString(i)); // ...con attributo id...
-                xmlw.writeStartElement(Costanti.TAG_NOME);
-                xmlw.writeCharacters(listaPersone.get(i).getNome());
-                xmlw.writeEndElement();
-                xmlw.writeStartElement(Costanti.TAG_COGNOME);
-                xmlw.writeCharacters(listaPersone.get(i).getCognome());
-                xmlw.writeEndElement();
-                xmlw.writeStartElement(Costanti.TAG_SESSO);
-                xmlw.writeCharacters(String.valueOf(listaPersone.get(i).getSesso()));
-                xmlw.writeEndElement();
-                xmlw.writeStartElement(Costanti.TAG_COMUNE_NASCITA);
-                xmlw.writeCharacters(listaPersone.get(i).getLuogo());
-                xmlw.writeEndElement();
-                xmlw.writeStartElement(Costanti.TAG_DATA_NASCITA);
-                xmlw.writeCharacters(listaPersone.get(i).getDataDiNascita().toString());
-                xmlw.writeEndElement();
-                xmlw.writeStartElement(Costanti.TAG_CF);
-                xmlw.writeCharacters(listaPersone.get(i).getCodiceFiscale());
-                xmlw.writeEndElement();
-                xmlw.writeEndElement();
+        inizializzaXMLScrittura(Costanti.NOME_FILE_OUTPUT_XML);
+        xmlw.writeStartElement(Costanti.TAG_ROUTES); // scrittura del tag radice <programmaArnaldo>
 
-            }
-            xmlw.writeEndElement(); // chiusura di </programmaArnaldo>
-
-            xmlw.writeStartElement(Costanti.TAG_CODICE);
-            xmlw.writeStartElement(Costanti.TAG_INVALIDI);
-
-            xmlw.writeAttribute(Costanti.ATT_NUMERO,String.valueOf(getNumeroInvalidi(listaCF)));
-            for (CodiceFiscale codiceFiscale : listaCF) {
-                if (codiceFiscale.getValiditaCF().equals(ValiditaCF.INVALIDO)) {
-                    xmlw.writeStartElement(Costanti.TAG_CODICE);
-                    xmlw.writeCharacters(codiceFiscale.getNome());
+            for (int i = 0; i < NUMERO_TEAM; i++)
+            {
+                xmlw.writeStartElement(Costanti.TAG_ROUTE);
+                xmlw.writeAttribute(Costanti.ATT_NOME,String.valueOf(lista_team.get(i).getNome()));
+                xmlw.writeAttribute(Costanti.ATT_COST,String.valueOf(lista_team.get(i).getCarburante()));
+                xmlw.writeAttribute(Costanti.ATT_CITIES,String.valueOf(lista_team.get(i).getPercorso().size()));
+                for (int j = 0; j < lista_team.get(i).getPercorso().size(); j++) {
+                    xmlw.writeStartElement(Costanti.TAG_CITTA);
+                    xmlw.writeAttribute(Costanti.ATT_ID,String.valueOf(lista_team.get(i).getPercorso().get(j).getId()));
+                    xmlw.writeAttribute(Costanti.ATT_NOME_CITTA,String.valueOf(lista_team.get(i).getPercorso().get(j).getNome()));
                     xmlw.writeEndElement();
+
                 }
+                xmlw.writeEndElement(); // chiusura di </programmaArnaldo>
+
             }
+
             xmlw.writeEndElement();
-
-            xmlw.writeStartElement(Costanti.TAG_SPAIATI);
-
-            xmlw.writeAttribute(Costanti.ATT_NUMERO,String.valueOf(getNumeroSpaiati(listaCF)));
-            for (CodiceFiscale codiceFiscale : listaCF) {
-                if (codiceFiscale.getValiditaCF().equals(ValiditaCF.SPAIATO)) {
-                    xmlw.writeStartElement(Costanti.TAG_CODICE);
-                    xmlw.writeCharacters(codiceFiscale.getNome());
-                    xmlw.writeEndElement();
-                }
-            }
-            xmlw.writeEndElement();
-            xmlw.writeEndElement();
-
-
-
             xmlw.writeEndDocument(); // scrittura della fine del documento
             xmlw.flush();// svuota il buffer e procede alla scrittura
             xmlw.close(); // chiusura del documento e delle risorse impiegate
@@ -179,7 +145,10 @@ public final class Xml
         {   // se c’è un errore viene eseguita questa parte
             System.out.println(Costanti.ERR_SCRITTURA);
         }
+        System.out.println(AnsiColors.GREEN+"Scrittura file XML completata"+AnsiColors.RESET);
     }
-    */
+
+
+
 
 }
