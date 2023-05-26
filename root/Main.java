@@ -4,9 +4,8 @@ import javax.xml.stream.XMLStreamException;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
-import java.time.*;
-
-import static root.Xml.*;
+import static root.Xml.leggiCitta;
+import static root.Xml.scriviCitta;
 
 public class Main
 {
@@ -15,14 +14,13 @@ public class Main
         leggiCitta();
 
         ArrayList<Team> lista_team = new ArrayList<>();
-        lista_team.add(new Team("Tonatiuh"));
-        lista_team.add(new Team("Metztli"));
+        lista_team.add(new Team(Costanti.NOME_TEAM1));
+        lista_team.add(new Team(Costanti.NOME_TEAM2));
 
-        for (int i = 0; i < lista_team.size(); i++) {
-            Dijkstra.findShortestPath(lista_team.get(i));
+        for (Team team : lista_team)
+        {
+            Dijkstra.findShortestPath(team);
         }
-
-
 
         scriviCitta(lista_team);
 

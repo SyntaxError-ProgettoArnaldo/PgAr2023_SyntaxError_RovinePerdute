@@ -12,9 +12,6 @@ public class Position
         this.h = h;
     }
 
-    public Position() {
-    }
-
     public int getX() {
         return x;
     }
@@ -39,14 +36,6 @@ public class Position
         this.h = h;
     }
 
-    @Override
-    public String toString() {
-        return "Position{" +
-                "x=" + x +
-                ", y=" + y +
-                ", h=" + h +
-                '}';
-    }
     /**
      * Calcola distanza euclidea
      * @param p1 punto di partenza

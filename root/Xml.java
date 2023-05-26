@@ -19,7 +19,8 @@ public final class Xml
     /**
      * @param filename path del file con cui inizializzare
      */
-    public static void inizializzaXMLLettura(String filename) throws FileNotFoundException, XMLStreamException {
+    public static void inizializzaXMLLettura(String filename) throws FileNotFoundException, XMLStreamException
+    {
         xmlif = XMLInputFactory.newInstance();
         xmlr = xmlif.createXMLStreamReader(filename, new FileInputStream(filename));
     }
@@ -47,59 +48,57 @@ public final class Xml
 
         int id = -1;
         String nome = "";
-        Position p = new Position();
-        ArrayList<Integer> link = new ArrayList<>();
+        int x = 0;
+        int y = 0;
+        int z = 0;
+        ArrayList<Integer> link = new ArrayList<>();        //lista dei collegamenti delle singole città
 
-        while (xmlr.hasNext()) { // continua a leggere finché ha eventi a disposizione
-            switch (xmlr.getEventType()) { // switch sul tipo di evento
-                case XMLStreamConstants.START_ELEMENT:
-                    switch(xmlr.getLocalName())
+        while (xmlr.hasNext()) // continua a leggere finché ha eventi a disposizione
+        {
+            switch (xmlr.getEventType()) // switch sul tipo di evento
+            {
+                case XMLStreamConstants.START_ELEMENT ->
+                {
+                    switch (xmlr.getLocalName())
                     {
-                        case Costanti.TAG_CITTA:
+                        case Costanti.TAG_CITTA ->
                         {
-
-
-                           for (int i=0; i<xmlr.getAttributeCount();i++)
-                           {
-                                if(xmlr.getAttributeLocalName(i).equals("id"))
+                            for (int i = 0; i < xmlr.getAttributeCount(); i++)
+                            {
+                                if (xmlr.getAttributeLocalName(i).equals("id"))
                                 {
                                     id = Integer.parseInt(xmlr.getAttributeValue(i));
                                 }
-                               if(xmlr.getAttributeLocalName(i).equals("name"))
-                               {
-                                   nome = xmlr.getAttributeValue(i);
-                               }
-                               if(xmlr.getAttributeLocalName(i).equals("x"))
-                               {
-                                   p.setX(Integer.parseInt(xmlr.getAttributeValue(i)));
-                               }
-                               if(xmlr.getAttributeLocalName(i).equals("y"))
-                               {
-                                   p.setY(Integer.parseInt(xmlr.getAttributeValue(i)));
-                               }
-                               if(xmlr.getAttributeLocalName(i).equals("h"))
-                               {
-                                   p.setH(Integer.parseInt(xmlr.getAttributeValue(i)));
-                               }
-                           }
-
-                            break;
+                                if (xmlr.getAttributeLocalName(i).equals("name"))
+                                {
+                                    nome = xmlr.getAttributeValue(i);
+                                }
+                                if (xmlr.getAttributeLocalName(i).equals("x"))
+                                {
+                                    x = Integer.parseInt(xmlr.getAttributeValue(i));
+                                }
+                                if (xmlr.getAttributeLocalName(i).equals("y"))
+                                {
+                                    y = Integer.parseInt(xmlr.getAttributeValue(i));
+                                }
+                                if (xmlr.getAttributeLocalName(i).equals("h"))
+                                {
+                                    z = Integer.parseInt(xmlr.getAttributeValue(i));
+                                }
+                            }
                         }
-
-                        case Costanti.TAG_LINK:
+                        case Costanti.TAG_LINK ->
                         {
-                            link.add(Integer.parseInt(xmlr.getAttributeValue(0)));
+                            link.add(Integer.parseInt(xmlr.getAttributeValue(0)));  //aggiungo collegamento alla lista
                         }
-
                     }
-                    break;
-                case XMLStreamConstants.END_ELEMENT:
+                }
+                case XMLStreamConstants.END_ELEMENT ->
                 {
-                    if(xmlr.getLocalName().equals(Costanti.TAG_CITTA))
+                    if (xmlr.getLocalName().equals(Costanti.TAG_CITTA))
                     {
-                        Main.lista_citta.add(new Citta(id,p,nome,link));
+                        Main.lista_citta.add(new Citta(id, new Position(x, y, z), nome, link)); //aggiungo città alla lista
                         link = new ArrayList<>();
-                        p = new Position();
                     }
 
                 }
@@ -107,7 +106,7 @@ public final class Xml
             xmlr.next();
         }
         xmlr.close();
-        System.out.println(AnsiColors.GREEN+"Lettura file XML completata"+AnsiColors.RESET);
+        System.out.println(Costanti.LETTURA_FILE_COMPLETATA);
     }
 
     /**
@@ -117,26 +116,26 @@ public final class Xml
     {
         try { // blocco try per raccogliere eccezioni
         inizializzaXMLScrittura(Costanti.NOME_FILE_OUTPUT_XML);
-        xmlw.writeStartElement(Costanti.TAG_ROUTES); // scrittura del tag radice <programmaArnaldo>
+        xmlw.writeStartElement(Costanti.TAG_ROUTES); // scrittura del tag radice <routes>
 
             for (int i = 0; i < NUMERO_TEAM; i++)
             {
-                xmlw.writeStartElement(Costanti.TAG_ROUTE);
-                xmlw.writeAttribute(Costanti.ATT_NOME,String.valueOf(lista_team.get(i).getNome()));
+                xmlw.writeStartElement(Costanti.TAG_ROUTE);         //scrittura tag <route>
+                xmlw.writeAttribute(Costanti.ATT_NOME,String.valueOf(lista_team.get(i).getNome()));     //aggiunta attributi di route
                 xmlw.writeAttribute(Costanti.ATT_COST,String.valueOf(lista_team.get(i).getCarburante()));
                 xmlw.writeAttribute(Costanti.ATT_CITIES,String.valueOf(lista_team.get(i).getPercorso().size()));
-                for (int j = 0; j < lista_team.get(i).getPercorso().size(); j++) {
-                    xmlw.writeStartElement(Costanti.TAG_CITTA);
-                    xmlw.writeAttribute(Costanti.ATT_ID,String.valueOf(lista_team.get(i).getPercorso().get(j).getId()));
+                for (int j = 0; j < lista_team.get(i).getPercorso().size(); j++)
+                {
+                    xmlw.writeStartElement(Costanti.TAG_CITTA);      //scrittura tag <city>
+                    xmlw.writeAttribute(Costanti.ATT_ID,String.valueOf(lista_team.get(i).getPercorso().get(j).getId()));        //aggiunta attributi di city
                     xmlw.writeAttribute(Costanti.ATT_NOME_CITTA,String.valueOf(lista_team.get(i).getPercorso().get(j).getNome()));
-                    xmlw.writeEndElement();
+                    xmlw.writeEndElement();             //chiusura tag <city>
 
                 }
-                xmlw.writeEndElement(); // chiusura di </programmaArnaldo>
-
+                xmlw.writeEndElement(); // chiusura tag <route>
             }
 
-            xmlw.writeEndElement();
+            xmlw.writeEndElement();     //chiusura tag <routes>
             xmlw.writeEndDocument(); // scrittura della fine del documento
             xmlw.flush();// svuota il buffer e procede alla scrittura
             xmlw.close(); // chiusura del documento e delle risorse impiegate
@@ -145,10 +144,6 @@ public final class Xml
         {   // se c’è un errore viene eseguita questa parte
             System.out.println(Costanti.ERR_SCRITTURA);
         }
-        System.out.println(AnsiColors.GREEN+"Scrittura file XML completata"+AnsiColors.RESET);
+        System.out.println(Costanti.SCRITTURA_XML_COMPLETATA);
     }
-
-
-
-
 }

@@ -4,18 +4,20 @@ import UnibsLib.AnsiColors;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.PriorityQueue;
 
 import static root.Costanti.INFINITY;
 
 public final class Dijkstra
 {
+
     /**
      * Algoritmo di dijkstra per calcolare il percorso migliore
      */
 
-    public static void findShortestPath(Team team) {
-
+    public static void findShortestPath(Team team)
+    {
         MatriceCitta mat1 = team.getMat();
         int indice_rovine = mat1.getMat().length-1;
         int n = mat1.getMat().length;
@@ -27,27 +29,32 @@ public final class Dijkstra
         int[] indiciCitta = new int[n];
         Arrays.fill(indiciCitta, -1);
 
-        PriorityQueue<Integer> queue = new PriorityQueue<>((a, b) -> Double.compare(distanze[a], distanze[b]));
+        PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.comparingDouble(a -> distanze[a]));
         queue.offer(0);
 
-        while (!queue.isEmpty()) {
+        while (!queue.isEmpty())
+        {
             int currentCityIndex = queue.poll();
 
-            if (currentCityIndex == indice_rovine) {
+            if (currentCityIndex == indice_rovine)
+            {
                 break;
             }
 
-            for (int i = 0; i < n; i++) {
+            for (int i = 0; i < n; i++)
+            {
                 double nextDistance = mat1.getDistanza(currentCityIndex,i);
 
 
-                if (nextDistance == 0.0) {
+                if (nextDistance == 0.0)
+                {
                     continue;  // Ignore self-loops
                 }
 
                 double totalDistance = distanze[currentCityIndex] + nextDistance;
 
-                if (totalDistance < distanze[i]) {
+                if (totalDistance < distanze[i])
+                {
                     distanze[i] = totalDistance;
                     indiciCitta[i] = currentCityIndex;
                     queue.offer(i);
@@ -57,10 +64,9 @@ public final class Dijkstra
 
         ArrayList<Integer> percorso = creaPercorso(indiciCitta, indice_rovine);
         team.setCarburante(distanze[indice_rovine]);
-
         team.setPercorso(percorso);
 
-        System.out.println(AnsiColors.GREEN+"Percorso"+AnsiColors.RED+" "+team.getNome()+AnsiColors.RESET+AnsiColors.GREEN+" calcolato correttamente"+AnsiColors.RESET);
+        System.out.printf(Costanti.STAMPA_PERCORSO, team.getNome());
     }
 
     /**
@@ -69,15 +75,16 @@ public final class Dijkstra
      * @return Arraylist che contiene gli indici delle città per il percorso migliore
      */
 
-    private static ArrayList<Integer> creaPercorso(int[] previousCities, int lastCityIndex) {
+    private static ArrayList<Integer> creaPercorso(int[] previousCities, int lastCityIndex)
+    {
         ArrayList<Integer> percorso = new ArrayList<>();
-
         int currentIndex = lastCityIndex;
-        while (currentIndex != -1) {
+
+        while (currentIndex != -1)
+        {
             percorso.add(0, currentIndex);
             currentIndex = previousCities[currentIndex];
         }
-
         return percorso;
     }
 }
