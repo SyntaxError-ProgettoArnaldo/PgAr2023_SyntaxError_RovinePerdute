@@ -1,7 +1,5 @@
 package root;
 
-import UnibsLib.AnsiColors;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -14,17 +12,18 @@ public final class Dijkstra
 
     /**
      * Algoritmo di dijkstra per calcolare il percorso migliore
+     * @param team Il Team per cui calcolare il percorso migliore
      */
 
     public static void findShortestPath(Team team)
     {
-        MatriceCitta mat1 = team.getMat();
-        int indice_rovine = mat1.getMat().length-1;
-        int n = mat1.getMat().length;
+        MatriceCitta mat1 = team.getMat();   //matrice citta
+        int indice_rovine = mat1.getMat().length-1;   //indice di arrivo
+        int n = mat1.getMat().length;   //numero citta
 
         double[] distanze = new double[n];
-        Arrays.fill(distanze, INFINITY);
-        distanze[0] = 0.0;
+        Arrays.fill(distanze, INFINITY);  // riempie array con INFINITY
+        distanze[0] = 0.0;   //la prima in 0,0
 
         int[] indiciCitta = new int[n];
         Arrays.fill(indiciCitta, -1);
@@ -32,6 +31,7 @@ public final class Dijkstra
         PriorityQueue<Integer> queue = new PriorityQueue<>(Comparator.comparingDouble(a -> distanze[a]));
         queue.offer(0);
 
+        //finche la coda non è vuota continua
         while (!queue.isEmpty())
         {
             int currentCityIndex = queue.poll();
@@ -61,15 +61,18 @@ public final class Dijkstra
                 }
             }
         }
-
+        //crea il percorso con le citta effettive
         ArrayList<Integer> percorso = creaPercorso(indiciCitta, indice_rovine);
+        //calcola carburante e lo setta
         team.setCarburante(distanze[indice_rovine]);
+        //setta il percorso ottimale al team
         team.setPercorso(percorso);
-
+        //stampa il percorso ottimale
         System.out.printf(Costanti.STAMPA_PERCORSO, team.getNome());
     }
 
     /**
+     * Converte la lista di indici delle citta in una lista con gli oggetti Citta
      * @param previousCities lista degli id delle città
      * @param lastCityIndex indice dell'ultima città
      * @return Arraylist che contiene gli indici delle città per il percorso migliore
